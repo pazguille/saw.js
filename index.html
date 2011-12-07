@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<!--[if lt IE 7 ]> <html lang="es" class="no-js ie6"> <![endif]-->
+<!--[if IE 7 ]>    <html lang="es" class="no-js ie7"> <![endif]-->
+<!--[if IE 8 ]>    <html lang="es" class="no-js ie8"> <![endif]-->
+<!--[if IE 9 ]>    <html lang="es" class="no-js ie9"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--> <html lang="es" class="no-js"> <!--<![endif]-->
+	<head>
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />		
+		<title>Simple Ajax for Web Workers</title>
+	</head>
+
+	<body>
+		<script>
+
+			// Crea el Web Worker
+			var worker = new Worker("worker.js");
+
+			// Envía un mensaje al worker
+			worker.postMessage("Start");
+
+			// Recibe los mensajes del worker
+			worker.onmessage = function (event) {
+				console.log(event.data);
+			};
+
+		</script>
+	</body>
+</html>
