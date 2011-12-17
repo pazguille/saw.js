@@ -1,9 +1,8 @@
 /*
 * Simple Ajax for Web Workers v0.1
 */
-
-var saw = (function () {
-
+var workerScope = this,
+saw = (function () {
 	var Ajax = function (conf) {
 		var that = this,
 			conf = conf || {},
@@ -38,12 +37,18 @@ var saw = (function () {
 		
 					return methods;
 				},
+				"responseType": function (value) {
+					conf.responseType = value;
+	
+					return methods;
+				},
 				"send": function () {
 					var xhr = that.xhr;
 
 					if (conf.jsonp) {
 						that.setJSONP(conf.url, conf.success);
-						return that.xhr;
+
+						return;
 					}
 
 					xhr.onreadystatechange = function () {
@@ -64,6 +69,7 @@ var saw = (function () {
 		conf.headers["Accept"] = "text/javascript, application/json, text/html, application/xml, text/xml, */*";
 		conf.headers["Cache-Control"] = "cache";
 		conf.headers["Content-Type"] = "application/x-www-form-urlencoded";
+		conf.responseType = ""; //"text", "arraybuffer", "blob", or "document"
 		conf.cache = true;
 		conf.async = true;
 
@@ -73,33 +79,24 @@ var saw = (function () {
 		return methods;
 	};
 
-	/*Ajax.prototype.setJSONP = function (url, handler) {
+	Ajax.prototype.setJSONP = function (url, handler) {
 		var that = this;
 		var callback = "_jsonp" + parseInt(new Date().getTime());
 
-		window[callback] = function (data, status) {
-			window[callback] = undefined;
-			window[callback] = null;
+		workerScope[callback] = function (data, status) {
+			workerScope[callback] = undefined;
+			workerScope[callback] = null;
 
 			return handler(data, status);
 		};
 
-		var scriptTag = document.createElement("script");
-			scriptTag.charset = 'utf-8';
-			scriptTag.src = url.replace("sawp", callback);
-
-
-		document.body.appendChild(scriptTag);
-		scriptTag.onload = function () {
-			document.body.removeChild(scriptTag);
-		};
-
-	};*/
+		importScripts(url.replace("sawp", callback));
+	};
 	
 	Ajax.prototype.stateChange = function (conf) {
 		var xhr = this.xhr;
 		 if (xhr.readyState == 4 ) {
-			var response = xhr.responseText;
+			var response = xhr.response || xhr.responseText;
 
 		 	if ((xhr.status >= 200 && xhr.status < 300) || xhr.status == 304 || (xhr.status == 0 && response)) {
 				if (conf.hasOwnProperty("success")) {
@@ -157,8 +154,7 @@ var saw = (function () {
 			});
 
 			return cnx;
-		}
-		/*,
+		},
 		"jsonp": function (url) {			
 			var cnx = new Ajax({
 				"method": "get",
@@ -170,7 +166,7 @@ var saw = (function () {
 			});
 
 			return cnx;
-		}*/
+		}
 	};
 
     return core;

@@ -18,7 +18,7 @@
 			var worker = new Worker("worker.js");
 
 			// Envía un mensaje al worker
-			worker.postMessage("Start");
+			worker.postMessage("start");
 
 			// Recibe los mensajes del worker
 			worker.onmessage = function (event) {
