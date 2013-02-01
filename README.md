@@ -1,8 +1,8 @@
-Saw JS
-========
+# Saw JS
+
 Simple Ajax for Web Workers.
 
-## Syntax
+## Examples
 
 ``` js
 ```
